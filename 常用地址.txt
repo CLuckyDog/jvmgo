@@ -1,1 +1,3 @@
-D:\Program Fils\Java\jdk1.8.0_212\jre
+ch03 -Xjre "D:\Program Fils\Java\jdk1.8.0_212\jre"
+
+go install jvmgo/ch03

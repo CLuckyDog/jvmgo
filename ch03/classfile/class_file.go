@@ -34,7 +34,7 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 }
 
 //read（）
-//方法依次调用其他方法解析class文
+//方法依次调用其他方法解析class文,这个地方调用顺序不能乱，否则解析会出错
 func (self *ClassFile) read(reader *ClassReader) {self.readAndCheckMagic(reader)
 	self.readAndCheckVersion(reader)
 	self.constantPool = readConstantPool(reader)
