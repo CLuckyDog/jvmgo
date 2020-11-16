@@ -1,15 +1,31 @@
 package classfile
 
+/*
+field_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+method_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}
+*/
+
 type MemberInfo struct {
-	cp ConstantPool
-	accessFlags uint16
-	nameIndex uint16
+	cp              ConstantPool
+	accessFlags     uint16
+	nameIndex       uint16
 	descriptorIndex uint16
-	attributes []AttributeInfo
+	attributes      []AttributeInfo
 }
 
-//readMembers（）读取字
-//段表或方法表
+// read field or method table
 func readMembers(reader *ClassReader, cp ConstantPool) []*MemberInfo {
 	memberCount := reader.readUint16()
 	members := make([]*MemberInfo, memberCount)
@@ -19,7 +35,6 @@ func readMembers(reader *ClassReader, cp ConstantPool) []*MemberInfo {
 	return members
 }
 
-//readMember（）函数读取字段或方法数据
 func readMember(reader *ClassReader, cp ConstantPool) *MemberInfo {
 	return &MemberInfo{
 		cp:              cp,
@@ -29,9 +44,10 @@ func readMember(reader *ClassReader, cp ConstantPool) *MemberInfo {
 		attributes:      readAttributes(reader, cp),
 	}
 }
+
 func (self *MemberInfo) AccessFlags() uint16 {
 	return self.accessFlags
-} // getter
+}
 func (self *MemberInfo) Name() string {
 	return self.cp.getUtf8(self.nameIndex)
 }
@@ -39,3 +55,12 @@ func (self *MemberInfo) Descriptor() string {
 	return self.cp.getUtf8(self.descriptorIndex)
 }
 
+func (self *MemberInfo) CodeAttribute() *CodeAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *CodeAttribute:
+			return attrInfo.(*CodeAttribute)
+		}
+	}
+	return nil
+}
